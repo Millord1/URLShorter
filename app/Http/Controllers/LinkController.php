@@ -2,17 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\LinkData;
 use App\Models\Link;
+use App\Repositories\LinkRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LinkController extends Controller
 {
+    public function __construct(
+        protected LinkRepositoryInterface $linkRepository
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $links = $this->linkRepository->getAllForUser(Auth::user()->id);
+        return view('links.index', compact('links'));
     }
 
     /**
@@ -26,9 +34,10 @@ class LinkController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(LinkData $data)
     {
-        //
+        $this->linkRepository->create(Auth::user()->id, $data);
+        return back()->with('success', 'URL raccourcie !');
     }
 
     /**

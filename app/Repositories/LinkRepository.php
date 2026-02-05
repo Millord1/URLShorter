@@ -17,7 +17,7 @@ class LinkRepository implements LinkRepositoryInterface
      */
     public function getAllForUser(int $userId): LengthAwarePaginator
     {
-        return Link::where('user_id', $userId)->paginate(10);
+        return Link::where('user_id', $userId)->latest()->paginate(10);
     }
 
     /**
@@ -30,8 +30,21 @@ class LinkRepository implements LinkRepositoryInterface
         return Link::create([
             'user_id' => $userId,
             'original_url' => $data->original_url,
-            'short_code' => Str::random(6),
+            'short_code' => $this->generateUniqueCode(),
         ]);
+    }
+
+    /**
+     * @return string
+     * Generate a unique random string
+     */
+    private function generateUniqueCode(): string
+    {
+        do {
+            $code = Str::random(6);
+        } while ($this->findByCode($code) != null);
+
+        return $code;
     }
 
     /**
