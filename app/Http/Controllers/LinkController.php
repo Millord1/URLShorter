@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Data\LinkData;
 use App\Models\Link;
 use App\Repositories\LinkRepositoryInterface;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LinkController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(
         protected LinkRepositoryInterface $linkRepository
     ) {}
@@ -67,8 +70,11 @@ class LinkController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Link $link)
+    public function destroy(LinkData $data)
     {
-        //
+        $this->authorize('delete', $data);
+
+        $this->linkRepository->delete($data);
+        return back()->with('success', 'Lien supprimé.');
     }
 }

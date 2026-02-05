@@ -6,6 +6,7 @@ use App\Models\Link;
 use App\Data\LinkData;
 use App\Repositories\LinkRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class LinkRepository implements LinkRepositoryInterface
@@ -54,5 +55,19 @@ class LinkRepository implements LinkRepositoryInterface
     public function findByCode(string $code): ?Link
     {
         return Link::withTrashed()->where('short_code', $code)->first();
+    }
+
+    /**
+     * @param LinkData $data
+     * @return bool
+     */
+    public function delete(LinkData $data): bool
+    {
+        $link = Link::findOrFail($data->id);
+
+        if ($link->user_id !== Auth::user()->id) {
+            return false;
+        }
+        return $link->delete();
     }
 }
