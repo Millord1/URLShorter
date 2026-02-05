@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Repositories\Eloquent\LinkRepository;
+use App\Repositories\Eloquent\EloquentLinkRepository;
 use App\Repositories\LinkRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             LinkRepositoryInterface::class,
-            LinkRepository::class
+            EloquentLinkRepository::class
         );
     }
 

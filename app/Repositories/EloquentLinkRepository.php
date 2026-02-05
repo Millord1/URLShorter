@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
-class LinkRepository implements LinkRepositoryInterface
+class EloquentLinkRepository implements LinkRepositoryInterface
 {
 
     /**
@@ -55,6 +55,21 @@ class LinkRepository implements LinkRepositoryInterface
     public function findByCode(string $code): ?Link
     {
         return Link::withTrashed()->where('short_code', $code)->first();
+    }
+
+    /**
+     * @param DateTime $date
+     * @return int
+     */
+    public function deleteInactiveSince(\DateTime $date): int
+    {
+        return Link::where(function ($query) use ($date) {
+            $query->where('last_used_at', '<', $date)
+                ->orWhere(function ($q) use ($date) {
+                    $q->whereNull('last_used_at')
+                        ->where('created_at', '<', $date);
+                });
+        })->delete();
     }
 
     /**
