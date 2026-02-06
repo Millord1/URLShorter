@@ -83,11 +83,12 @@ class LinkRepository
      */
     public function deleteInactive(\DateTime $date): int
     {
-        return Link::where(function ($query) use ($date) {
-            $query->where('last_used_at', '<', $date)
-                ->orWhere(function ($q) use ($date) {
-                    $q->whereNull('last_used_at')->where('created_at', '<', $date);
-                });
+        return Link::query()
+            ->where(function ($query) use ($date) {
+                $query->where('last_used_at', '<', $date)
+                    ->orWhere(function ($q) use ($date) {
+                        $q->whereNull('last_used_at')->where('created_at', '<', $date);
+                    });
         })->delete();
     }
 }
