@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Link;
-use App\Service\LinkService;
+use App\Services\LinkService;
 use Illuminate\Console\Command;
 
 class CleanUpLinks extends Command
@@ -13,7 +12,7 @@ class CleanUpLinks extends Command
      *
      * @var string
      */
-    protected $signature = 'app:clean-up-links';
+    protected $signature = 'links:cleanup';
 
     /**
      * The console command description.

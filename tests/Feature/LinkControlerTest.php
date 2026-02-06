@@ -4,25 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Link;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class LinkControlerTest extends TestCase
 {
-    use RefreshDatabase;
-
-    private Link $link;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->link = Link::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
-
-        $this->actingAs($this->user);
-    }
 
     public function test_store_link(): void
     {

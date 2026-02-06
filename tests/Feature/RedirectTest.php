@@ -3,25 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\Link;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RedirectTest extends TestCase
 {
-    use RefreshDatabase;
-
-    private Link $link;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->link = Link::factory()->create([
-            'user_id' => $this->user->id,
-        ]);
-
-        $this->actingAs($this->user);
-    }
 
     public function test_redirect_and_track_clicks(): void
     {
