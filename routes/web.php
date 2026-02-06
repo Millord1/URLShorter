@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LinkController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RedirectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,4 +23,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('links', LinkController::class);
 });
 
+
 require __DIR__.'/auth.php';
+
+Route::get('/{short_code}', [RedirectController::class, 'handle'])->name('redirect');

@@ -36,17 +36,17 @@ class LinkPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, LinkData $data): bool
+    public function update(User $user, Link $link): bool
     {
-        return $user->id === $data->user_id;
+        return $user->id === $link->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, LinkData $data): bool
+    public function delete(User $user, Link $link): bool
     {
-        return $user->id === $data->user_id;
+        return $user->id === $link->user_id;
     }
 
     /**

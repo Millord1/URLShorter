@@ -5,20 +5,21 @@ namespace App\Data;
 use App\Models\Link;
 use DateTime;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Optional;
 
 class LinkData extends Data
 {
 
     public function __construct(
-        public ?int $id,
-        public int $user_id,
-        public string $short_code,
-        public string $original_url,
-        public int $clicks_count,
-        public DateTime $last_used_at,
-        public DateTime $created_at,
-        public DateTime $updated_at,
-        public DateTime $deleted_at
+        public readonly ?int $id,
+        public readonly int|Optional $user_id,
+        public readonly string|Optional $short_code,
+        public readonly string $original_url,
+        public readonly int|Optional $clicks_count,
+        public readonly ?string $last_used_at,
+        public readonly ?string $created_at,
+        public readonly ?string $updated_at,
+        public readonly ?string $deleted_at
     ){}
 
     /**
@@ -29,21 +30,53 @@ class LinkData extends Data
     {
         return new LinkData(
             $model->id,
-            $model->userId,
-            $model->shortCode,
-            $model->originalUrl,
-            $model->clicksCount,
-            $model->lastUsedAt,
-            $model->createdAt,
-            $model->updatedAt,
-            $model->deletedAt
+            $model->user_id,
+            $model->short_code,
+            $model->original_url,
+            $model->clicks_count,
+            $model->last_used_at,
+            $model->created_at,
+            $model->updated_at,
+            $model->deleted_at
         );
     }
 
-    public static function rules(): array
+    /**
+     * @return array
+     */
+    public function toArray(): array
     {
         return [
-            'original_url' => ['required', 'url', 'active_url'],  
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'short_code' => $this->short_code,
+            'original_url' => $this->original_url,
+            'clicks_count' => $this->clicks_count,
+            'last_used_at' => $this->last_used_at,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function toUpdate(): array
+    {
+        return [
+            'original_url' => $this->original_url,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function toCreate(): array
+    {
+        return [
+            'user_id' => $this->user_id,
+            'original_url' => $this->original_url,
+            'short_code' => $this->short_code,
         ];
     }
 }
