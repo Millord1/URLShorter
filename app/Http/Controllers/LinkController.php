@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Data\LinkData;
+use App\Http\Requests\LinkRequest;
 use App\Models\Link;
-use App\Repositories\LinkRepositoryInterface;
+use App\Services\LinkService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LinkController extends Controller
@@ -14,7 +14,7 @@ class LinkController extends Controller
     use AuthorizesRequests;
 
     public function __construct(
-        protected LinkRepositoryInterface $linkRepository
+        protected LinkService $linkService,
     ) {}
 
     /**
@@ -22,59 +22,49 @@ class LinkController extends Controller
      */
     public function index()
     {
-        $links = $this->linkRepository->getAllForUser(Auth::user()->id);
+        $links = $this->linkService->getAllForUser(Auth::user()->id);
         return view('links.index', compact('links'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(LinkData $data)
+    public function store(LinkRequest $request)
     {
-        $this->linkRepository->create(Auth::user()->id, $data);
-        return back()->with('success', 'URL raccourcie !');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Link $link)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Link $link)
-    {
-        //
+        $this->linkService->create(
+            Auth::user()->id, 
+            $request->validated('original_url')
+        );
+        return redirect()->intended(route('links.index', absolute: false));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Link $link)
+    public function update(LinkRequest $request, Link $link)
     {
-        //
+        $this->authorize('update', $link);
+
+        $data = LinkData::from([
+            ...$request->validated(),
+            'id' => $link->id,
+            'user_id' => $link->user_id
+        ]);
+
+        $this->linkService->update($data);
+
+        return redirect()->route('links.index')->with('success', 'Lien mis à jour !');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(LinkData $data)
+    public function destroy(Link $link)
     {
-        $this->authorize('delete', $data);
+        $this->authorize('delete', $link);
+        $data = LinkData::fromModel($link);
+        $this->linkService->delete($data);
 
-        $this->linkRepository->delete($data);
-        return back()->with('success', 'Lien supprimé.');
+        return redirect()->route('links.index')->with('success', 'Lien supprimé avec succès');
     }
 }
